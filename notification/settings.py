@@ -62,7 +62,7 @@ ROOT_URLCONF = 'notification.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ["templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -153,3 +153,31 @@ EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))  # Set the appropriate SMTP port
 EMAIL_USE_TLS = True  # Set to True if your SMTP server uses TLS
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'your_email@example.com')  # Your email
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'your_password')  # Your email password
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": "general.log",
+            "formatter": "verbose",
+            "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO"),  # Set log level to INFO or desired level
+        },
+    },
+    "loggers": {
+        "": {
+            "handlers": ["console", "file"],
+            "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO"),
+            "propagate": True,  # Ensure logs propagate to all handlers
+        }
+    },
+    "formatters": {
+        "verbose": {
+            "format": "{asctime} ({levelname})- {name}- {message}",
+            "style": "{",
+        }
+    },
+}

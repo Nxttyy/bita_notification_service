@@ -1,30 +1,3 @@
-# from rest_framework.response import Response
-# from rest_framework import status
-# from django.core.mail import send_mail
-# from django.conf import settings
-# import logging
-# from django.views.decorators.csrf import csrf_exempt
-# from rest_framework.decorators import api_view, renderer_classes
-#
-# # logger = logging.getLogger(__name__)
-#
-# @csrf_exempt
-# @api_view(('POST',))
-# def send_single_email(request):
-#     try:
-#         send_mail("My subject",
-#                   "the message",
-#                   settings.EMAIL_HOST_USER,
-#                   ["nathnaelyirga@gmail.com"],
-#                   fail_silently=False
-#                 )
-#
-#         return Response({"status": "Email sent successfully"}, status=status.HTTP_200_OK)
-#     except Exception as e:
-#         return Response({"status": "Failed to send email", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-#
-#
-
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
@@ -33,6 +6,11 @@ from django.conf import settings
 from rest_framework import status
 # from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.utils import extend_schema, OpenApiResponse
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+import logging
+
+logger = logging.getLogger(__name__)
 
 @csrf_exempt
 @extend_schema(
@@ -94,12 +72,10 @@ from drf_spectacular.utils import extend_schema, OpenApiResponse
 @api_view(('POST',))
 def send_single_email(request):
     try:
-        # Extracting the dynamic data from the request body
         subject = request.data.get('subject')
         message = request.data.get('message')
         recipients = request.data.get('recipients')
 
-        # Validate if all required fields are present
         if not subject or not message or not recipients:
             return Response(
                 {"status": "Missing required fields", "error": "subject, message, and recipients are required"},
@@ -110,16 +86,27 @@ def send_single_email(request):
         if isinstance(recipients, str):
             recipients = [email.strip() for email in recipients.split(',')]
 
-        # Send the email
-        send_mail(
-            subject,
-            message,
-            settings.EMAIL_HOST_USER,
-            recipients,  # List of recipients
-            fail_silently=False
-        )
+         # Render the HTML template
+        html_message = render_to_string('email_template.html', {
+            'subject': subject,
+            'message': message
+        })
 
+        # Create the email message
+        email = EmailMessage(
+            subject=subject,
+            body=html_message,
+            from_email=settings.EMAIL_HOST_USER,
+            to=recipients
+        )
+        email.content_subtype = 'html'  # Specify that the email is HTML
+
+        # Send the email
+        email.send(fail_silently=False)
+
+        logger.info(f"email subject: {subject}, sent to {recipients}")
         return Response({"status": "Email sent successfully"}, status=status.HTTP_200_OK)
 
     except Exception as e:
+        logger.error(f"email sending error:\n{e}")
         return Response({"status": "Failed to send email", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
