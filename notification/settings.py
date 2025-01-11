@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-odca8#js_1)in+v47+#z5f=j5kn362_o)9w^_)iqy)abvp=^87
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["localhost", "gumiapps.com"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -148,11 +148,11 @@ SPECTACULAR_SETTINGS = {
 
 # SMTP settings
 EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.example.com')  # Set your SMTP host
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))  # Set the appropriate SMTP port
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'mail.gumiapps.com')  # Set your SMTP host
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 456))  # Set the appropriate SMTP port
 EMAIL_USE_TLS = True  # Set to True if your SMTP server uses TLS
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'your_email@example.com')  # Your email
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'your_password')  # Your email password
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'dev-v01@gumiapps.com')  # Your email
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'password')  # Your email password
 
 
 LOGGING = {
