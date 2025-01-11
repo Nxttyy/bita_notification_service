@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from email_notification.views import home
 
 urlpatterns = [
+    path('', home, name='home'),  # Homepage
     path('admin/', admin.site.urls),
     path('api/', include('email_notification.urls')),  # Adjust 'your_app' to your actual app name
 

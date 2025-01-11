@@ -29,9 +29,9 @@ load_dotenv()
 SECRET_KEY = 'django-insecure-odca8#js_1)in+v47+#z5f=j5kn362_o)9w^_)iqy)abvp=^87'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "gumiapps.com"]
 
 
 # Application definition

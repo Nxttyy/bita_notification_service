@@ -10,6 +10,8 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 import logging
 
+from django.http import HttpResponse
+
 logger = logging.getLogger(__name__)
 
 @csrf_exempt
@@ -110,3 +112,20 @@ def send_single_email(request):
     except Exception as e:
         logger.error(f"email sending error:\n{e}")
         return Response({"status": "Failed to send email", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+def home(request):
+    return HttpResponse("""
+        <h1>Inventory Project Menu</h1>
+        <ul>
+            <li><a href="/api/schema/">Schema (OpenAPI JSON)</a></li>
+            <li><a href="/api/schema/swagger-ui/">Swagger UI</a></li>
+            <li><a href="/api/schema/redoc/">Redoc UI</a></li>
+        </ul>
+    """)
+
+
+
