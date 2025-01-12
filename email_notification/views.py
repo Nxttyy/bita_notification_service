@@ -1,21 +1,30 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework import status
-# from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiParameter
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 import logging
 
 from django.http import HttpResponse
+from rest_framework_api_key.models import APIKey
 
 logger = logging.getLogger(__name__)
 
 @csrf_exempt
 @extend_schema(
+    # parameters=[
+    #     OpenApiParameter(
+    #         name='Authorization',  # The header name
+    #         description='API Key authentication, use format: "Api-Key <API_KEY>"',
+    #         required=True,
+    #         type=str,
+    #         location=OpenApiParameter.HEADER,
+    #     ),
+    # ],
     summary="Send an Email to One/Multiple Recipients",
     description="This endpoint sends an email with a dynamic subject, message, and recipients. The recipients can be provided as a comma-separated list.",
     request={
@@ -68,8 +77,8 @@ logger = logging.getLogger(__name__)
                 }
             }
         ),
-    }
-)
+    },
+ )
 
 @api_view(('POST',))
 def send_single_email(request):
@@ -103,14 +112,24 @@ def send_single_email(request):
         )
         email.content_subtype = 'html'  # Specify that the email is HTML
 
+        key = request.META["HTTP_AUTHORIZATION"].split()[1]
+        client_name = APIKey.objects.get_from_key(key)
+
+
+        ip_address = request.META.get('HTTP_X_FORWARDED_FOR', None)
+        if ip_address:
+            ip_address = ip_address.split(',')[0]
+        else:
+            ip_address = request.META.get('REMOTE_ADDR')
+        
         # Send the email
         email.send(fail_silently=False)
 
-        logger.info(f"email subject: {subject}, sent to {recipients}")
+        logger.info(f"{client_name}({ip_address}) sent subject: {subject} to {recipients}")
         return Response({"status": "Email sent successfully"}, status=status.HTTP_200_OK)
 
     except Exception as e:
-        logger.error(f"email sending error:\n{e}")
+        logger.error(e)
         return Response({"status": "Failed to send email", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

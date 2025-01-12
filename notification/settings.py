@@ -29,6 +29,7 @@ load_dotenv()
 SECRET_KEY = 'django-insecure-odca8#js_1)in+v47+#z5f=j5kn362_o)9w^_)iqy)abvp=^87'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = True
 DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drf_spectacular',
     'rest_framework',
+    'rest_framework_api_key',
 ]
 
 MIDDLEWARE = [
@@ -130,26 +132,37 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-# drf-spectacular
 REST_FRAMEWORK = {
-    # YOUR SETTINGS
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework_api_key.permissions.HasAPIKey',
+    ],
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework.authentication.SessionAuthentication',
+    #     'rest_framework.authentication.BasicAuthentication',
+    # ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-
+# Step 1: Define a custom security scheme in the settings
 SPECTACULAR_SETTINGS = {
     'TITLE': 'bita notification service',
     'DESCRIPTION': 'Your project description',
     'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    # OTHER SETTINGS
+    # 'SERVE_INCLUDE_SCHEMA': False,  # Hide the schema endpoint
+    'SECURITY_DEFINITIONS': {
+        'Api-Key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+        }
+    },
+    # 'SECURITY': [{'Api-Key': []}],
 }
 
 # SMTP settings
 EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'mail.gumiapps.com')  # Set your SMTP host
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 456))  # Set the appropriate SMTP port
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 465))  # Set the appropriate SMTP port
 EMAIL_USE_TLS = True  # Set to True if your SMTP server uses TLS
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'dev-v01@gumiapps.com')  # Your email
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'password')  # Your email password
