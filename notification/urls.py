@@ -22,7 +22,8 @@ from email_notification.views import home
 urlpatterns = [
     path('', home, name='home'),  # Homepage
     path('admin/', admin.site.urls),
-    path('api/', include('email_notification.urls')),  # Adjust 'your_app' to your actual app name
+    path('api/', include('email_notification.urls')),  
+    path('api/monitor/', include('monitor.urls')),  
 
 # DRF Spectacular Endpoints
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),  # Generate the schema

@@ -1,11 +1,14 @@
-
 from django.test import TestCase
 from django.urls import reverse
 from unittest.mock import patch
 from django.core.mail import EmailMessage
+from rest_framework_api_key.models import APIKey
 
 class SendSingleEmailTest(TestCase):
     def setUp(self):
+        # Create API key for authentication
+        self.api_key, self.key = APIKey.objects.create_key(name="Test Email Key")
+        
         self.url = reverse('send_single_email')  # Replace with the actual URL name of the view
         self.valid_payload = {
             "subject": "Test Email",
@@ -22,7 +25,9 @@ class SendSingleEmailTest(TestCase):
         # Simulate successful email sending
         mock_send.return_value = 1
 
-        response = self.client.post(self.url, data=self.valid_payload, content_type='application/json')
+        # Include API key in headers
+        headers = {'HTTP_AUTHORIZATION': f'Api-Key {self.key}'}
+        response = self.client.post(self.url, data=self.valid_payload, content_type='application/json', **headers)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"status": "Email sent successfully"})
 
@@ -30,7 +35,9 @@ class SendSingleEmailTest(TestCase):
         mock_send.assert_called_once()
 
     def test_send_email_missing_fields(self):
-        response = self.client.post(self.url, data=self.invalid_payload, content_type='application/json')
+        # Include API key in headers
+        headers = {'HTTP_AUTHORIZATION': f'Api-Key {self.key}'}
+        response = self.client.post(self.url, data=self.invalid_payload, content_type='application/json', **headers)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {
             "status": "Missing required fields",
@@ -42,7 +49,9 @@ class SendSingleEmailTest(TestCase):
         # Simulate an exception being raised during email sending
         mock_send.side_effect = Exception("SMTP server not responding")
 
-        response = self.client.post(self.url, data=self.valid_payload, content_type='application/json')
+        # Include API key in headers
+        headers = {'HTTP_AUTHORIZATION': f'Api-Key {self.key}'}
+        response = self.client.post(self.url, data=self.valid_payload, content_type='application/json', **headers)
         self.assertEqual(response.status_code, 500)
         self.assertEqual(response.json(), {
             "status": "Failed to send email",

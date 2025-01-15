@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'rest_framework',
     'rest_framework_api_key',
+    'email_notification',
+    'monitor',
 ]
 
 MIDDLEWARE = [
@@ -91,7 +93,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -151,7 +152,7 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'bita notification service',
     'DESCRIPTION': 'Your project description',
     'VERSION': '1.0.0',
-    # 'SERVE_INCLUDE_SCHEMA': False,  # Hide the schema endpoint
+    'SERVE_INCLUDE_SCHEMA': False,  # Hide the schema endpoint
     'SECURITY_DEFINITIONS': {
         'Api-Key': {
             'type': 'apiKey',
