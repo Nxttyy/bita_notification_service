@@ -11,6 +11,9 @@ import logging
 
 from django.http import HttpResponse
 from rest_framework_api_key.models import APIKey
+from django.shortcuts import render
+from monitor.models import RequestLog
+from .utils import data_from_request, build_error_log
 
 logger = logging.getLogger(__name__)
 
@@ -82,69 +85,67 @@ logger = logging.getLogger(__name__)
 
 @api_view(('POST',))
 def send_single_email(request):
+
+    client_name, ip_address = data_from_request(request)
+
     try:
         subject = request.data.get('subject')
         message = request.data.get('message')
         recipients = request.data.get('recipients')
 
+
         if not subject or not message or not recipients:
+            RequestLog.objects.create(sender = client_name, 
+                                response_status_code=400,
+                                send_to = RequestLog.EMAIL)
+
+
             return Response(
                 {"status": "Missing required fields", "error": "subject, message, and recipients are required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
         # Ensure recipients is a list (it can be a comma-separated string)
         if isinstance(recipients, str):
             recipients = [email.strip() for email in recipients.split(',')]
 
-         # Render the HTML template
+        # Build email
         html_message = render_to_string('email_template.html', {
             'subject': subject,
             'message': message
         })
 
-        # Create the email message
         email = EmailMessage(
             subject=subject,
             body=html_message,
             from_email=settings.EMAIL_HOST_USER,
             to=recipients
         )
-        email.content_subtype = 'html'  # Specify that the email is HTML
-
-        key = request.META["HTTP_AUTHORIZATION"].split()[1]
-        client_name = APIKey.objects.get_from_key(key)
-
-
-        ip_address = request.META.get('HTTP_X_FORWARDED_FOR', None)
-        if ip_address:
-            ip_address = ip_address.split(',')[0]
-        else:
-            ip_address = request.META.get('REMOTE_ADDR')
+        email.content_subtype = 'html'
         
-        # Send the email
-        email.send(fail_silently=False)
+        # email.send(fail_silently=False)
+
+        print("created")
+        RequestLog.objects.create(sender = client_name, 
+                                response_status_code=200,
+                                send_to = RequestLog.EMAIL)
+        # my_request.save() 
 
         logger.info(f"{client_name}({ip_address}) sent subject: {subject} to {recipients}")
         return Response({"status": "Email sent successfully"}, status=status.HTTP_200_OK)
 
     except Exception as e:
+        my_error = build_error_log(e)
+        RequestLog.objects.create(sender = client_name, 
+                                response_status_code=500,
+                                send_to = RequestLog.EMAIL,
+                                error_log = my_error)
         logger.error(e)
         return Response({"status": "Failed to send email", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
-
-
 def home(request):
-    return HttpResponse("""
-        <h1>Inventory Project Menu</h1>
-        <ul>
-            <li><a href="/api/schema/">Schema (OpenAPI JSON)</a></li>
-            <li><a href="/api/schema/swagger-ui/">Swagger UI</a></li>
-            <li><a href="/api/schema/redoc/">Redoc UI</a></li>
-        </ul>
-    """)
-
-
+    return render(request, 'home.html')
 
