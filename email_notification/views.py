@@ -124,13 +124,11 @@ def send_single_email(request):
         )
         email.content_subtype = 'html'
         
-        # email.send(fail_silently=False)
+        email.send(fail_silently=False)
 
-        print("created")
         RequestLog.objects.create(sender = client_name, 
                                 response_status_code=200,
                                 send_to = RequestLog.EMAIL)
-        # my_request.save() 
 
         logger.info(f"{client_name}({ip_address}) sent subject: {subject} to {recipients}")
         return Response({"status": "Email sent successfully"}, status=status.HTTP_200_OK)
