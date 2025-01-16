@@ -3,39 +3,26 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.models import APIKey
 from .serializers import APIKeySerializer
-from monitor.models import RequestLog
+from .models import RequestLog
 
 
 class MonitorAPIView(APIView):
     def get(self, request, format=None):
-        # Example metrics (replace with actual calculations)
+        total_requests = RequestLog.total_request_count()
+        success_count = RequestLog.success_count()
+        failure_count = RequestLog.failure_count()
+
         metrics = {
-            "success_rate": self.success_rate(),
-            "failure_rate": self.failure_rate(),
-            "request_count_by_endpoint": self.request_count_by_endpoint(),
-            "request_count_by_client": self.request_count_by_client(),
+            "total_requests": total_requests,
+            "success_count": success_count,
+            "success_rate": success_count / total_requests if total_requests else 0,
+            "failure_count": failure_count,
+            "failure_rate": failure_count / total_requests if total_requests else 0,
+            "request_count_by_endpoint": RequestLog.request_count_by_endpoint(),
+            "request_count_by_client": RequestLog.request_count_by_client(),
         }
         return Response(metrics, status=status.HTTP_200_OK)
 
-    def success_rate(self):
-        # Placeholder: Calculate and return the success rate
-        return 95.0  # Example: 95%
-
-    def failure_rate(self):
-        # Placeholder: Calculate and return the failure rate
-        return 5.0  # Example: 5%
-
-    def request_count_by_endpoint(self):
-        # Placeholder: Return request count grouped by endpoint
-        return {"endpoint_1": 100, "endpoint_2": 200}
-
-    def request_count_by_client(self):
-        # Placeholder: Return request count grouped by client
-        return {"client_1": 150, "client_2": 150}
-
-    def export_logs(self):
-        # Placeholder: Logic for exporting logs (if triggered via another endpoint)
-        pass
 
 
 class APIKeyListView(APIView):
