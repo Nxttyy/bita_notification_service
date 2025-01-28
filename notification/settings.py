@@ -36,6 +36,27 @@ DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = ["*"]
 
 
+# constants and .env variables
+sms_rate_limit = os.getenv('SMS_RATELIMIT_PER_MINUTE', 10)  
+
+
+# SMTP settings
+EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'mail.gumiapps.com')  # Set your SMTP host
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 465))  # Set the appropriate SMTP port
+EMAIL_USE_TLS = True  # Set to True if your SMTP server uses TLS
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'dev-v01@gumiapps.com')  # Your email
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'password')  # Your email password
+
+
+# SMS constatnts
+SMS_API_KEY = os.getenv('SMS_API_KEY')  # Load from .env
+SMS_API_HEADER_FIELD = 'X-GeezSMS-Key'
+SMS_API_URL = 'https://api.geezsms.com/api/v1/sms/send'
+SMS_BULK_API_URL = 'https://api.geezsms.com/api/v1/sms/send/bulk'
+SMS_SHORT_CODE = ''  # Replace with your actual shortcode if applicable
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -137,13 +158,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework_api_key.permissions.HasAPIKey',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_THROTTLE_RATES': {
-        'sms': '2/minute',  # Custom throttle rate for this scope
+        'sms': f'{sms_rate_limit}/minute',  # Custom throttle rate for this scope
     },}
 
 # Step 1: Define a custom security scheme in the settings
@@ -161,15 +183,6 @@ SPECTACULAR_SETTINGS = {
     },
     # 'SECURITY': [{'Api-Key': []}],
 }
-
-# SMTP settings
-EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'mail.gumiapps.com')  # Set your SMTP host
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 465))  # Set the appropriate SMTP port
-EMAIL_USE_TLS = True  # Set to True if your SMTP server uses TLS
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'dev-v01@gumiapps.com')  # Your email
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'password')  # Your email password
-
 
 LOGGING = {
     "version": 1,
@@ -197,3 +210,5 @@ LOGGING = {
         }
     },
 }
+
+

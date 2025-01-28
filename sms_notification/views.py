@@ -1,28 +1,19 @@
-
 import os
 import requests
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, throttle_classes
-from dotenv import load_dotenv
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, OpenApiResponse
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from .schemas import SINGLE_SMS_REQUEST_SCHEMA, SINGLE_SMS_RESPONSES, BULK_SMS_REQUEST_SCHEMA, BULK_SMS_RESPONSES
+from django.conf import settings  # Import Django settings
 
-load_dotenv()
 
 
-# custom sms throttle
+# Custom SMS throttle
 class SMSRateThrottle(UserRateThrottle):
     scope = 'sms'
-
-
-# Constants
-API_HEADER_FIELD = 'X-GeezSMS-Key'
-API_URL = 'https://api.geezsms.com/api/v1/sms/send'
-BULK_API_URL = 'https://api.geezsms.com/api/v1/sms/send/bulk'
-SHORT_CODE = ''
 
 
 @extend_schema(
@@ -35,11 +26,11 @@ SHORT_CODE = ''
 @api_view(['POST'])
 @throttle_classes([SMSRateThrottle]) 
 def single_sms(request):
-    # Pull the API key from .env
-    api_key = os.getenv('SMS_API_KEY')
+    # Pull the API key from settings
+    api_key = settings.SMS_API_KEY
     if not api_key:
         return Response(
-            {"error": "Third party autherization failed"},
+            {"error": "Third party authorization failed"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
@@ -58,39 +49,35 @@ def single_sms(request):
     payload = {
         "phone": phone,
         "msg": message,
-        "shortcode_id": SHORT_CODE,
+        # "shortcode_id": settings.SMS_SHORT_CODE,
     }
 
     # Prepare headers
     headers = {
-        API_HEADER_FIELD: api_key,
+        settings.SMS_API_HEADER_FIELD: api_key,
     }
-
 
     response_msg = {}
 
     # Make the POST request to GeezSMS API
     try:
-        response = requests.post(API_URL, json=payload, headers=headers)
+        response = requests.post(settings.SMS_API_URL, json=payload, headers=headers)
         response_msg = response.json()
         response.raise_for_status()  # Raise an exception for HTTP errors
-        if response_msg['error'] in ['true', "True", True, '1']:
+        if response_msg.get('error') in ['true', "True", True, '1']:
             return Response(
-                {"error_message": "Failed to send SMS",
-                **response_msg},
+                {"error_message": "Failed to send SMS", **response_msg},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         return Response(
-            {"status": "SMS sent successfully",  
-             **response_msg},
+            {"status": "SMS sent successfully", **response_msg},
             status=status.HTTP_200_OK
         )
     except requests.exceptions.RequestException as e:
         # Handle any errors from the API request
-         return Response(
-            {"error_message": f"Failed to send SMS: {str(e)}",
-            **response_msg},
+        return Response(
+            {"error_message": f"Failed to send SMS: {str(e)}", **response_msg},
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -105,11 +92,11 @@ def single_sms(request):
 @api_view(['POST'])
 @throttle_classes([SMSRateThrottle]) 
 def bulk_sms(request):
-    # Pull the API key from .env
-    api_key = os.getenv('SMS_API_KEY')
+    # Pull the API key from settings
+    api_key = settings.SMS_API_KEY
     if not api_key:
         return Response(
-            {"error": "Third party autherization failed"},
+            {"error": "Third party authorization failed"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
@@ -134,7 +121,7 @@ def bulk_sms(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-    # prepare payload
+    # Prepare payload
     payload = {
         "token": api_key,
         "contacts": contacts,
@@ -145,29 +132,24 @@ def bulk_sms(request):
 
     response_msg = {}
     try:
-        response = requests.post(BULK_API_URL, json=payload)
+        response = requests.post(settings.SMS_BULK_API_URL, json=payload)
         response_msg = response.json()
         response.raise_for_status()  # Raise an exception for HTTP errors
 
-        if response_msg['error'] in ['true', "True", True, '1']:
+        if response_msg.get('error') in ['true', "True", True, '1']:
             return Response(
-                {"error_message": "Failed to send bulk SMS",
-                **response_msg},
+                {"error_message": "Failed to send bulk SMS", **response_msg},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         return Response(
-            {"status": "Bulk SMS sent successfully", 
-            **response.json()},
+            {"status": "Bulk SMS sent successfully", **response.json()},
             status=status.HTTP_200_OK
         )
     except requests.exceptions.RequestException as e:
         # Handle any errors from the API request
         return Response(
-            {"error_message": f"Failed to send bulk SMS: {str(e)}",
-            **response_msg},
+            {"error_message": f"Failed to send bulk SMS: {str(e)}", **response_msg},
             status=status.HTTP_400_BAD_REQUEST
         )
-
-
 
