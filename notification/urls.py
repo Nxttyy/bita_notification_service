@@ -23,6 +23,7 @@ urlpatterns = [
     path('', home, name='home'),  # Homepage
     path('admin/', admin.site.urls),
     path('api/', include('email_notification.urls')),  
+    path('api/', include('sms_notification.urls')),  
     path('api/monitor/', include('monitor.urls')),  
 
 # DRF Spectacular Endpoints

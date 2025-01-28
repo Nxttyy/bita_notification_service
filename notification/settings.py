@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_api_key',
     'email_notification',
+    'sms_notification',
     'monitor',
 ]
 
@@ -140,12 +141,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework_api_key.permissions.HasAPIKey',
     ],
-    # 'DEFAULT_AUTHENTICATION_CLASSES': [
-    #     'rest_framework.authentication.SessionAuthentication',
-    #     'rest_framework.authentication.BasicAuthentication',
-    # ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
+    'DEFAULT_THROTTLE_RATES': {
+        'sms': '2/minute',  # Custom throttle rate for this scope
+    },}
 
 # Step 1: Define a custom security scheme in the settings
 SPECTACULAR_SETTINGS = {
