@@ -19,7 +19,7 @@ class RequestLog(models.Model):
     sender = models.ForeignKey(APIKey, on_delete=models.CASCADE)
     sent_at = models.DateTimeField(auto_now_add=True)  
     response_status_code = models.IntegerField()  
-    send_to = models.CharField(
+    sent_to = models.CharField(
         max_length=10,
         choices=SEND_TO_CHOICES,
         default=EMAIL,  
@@ -34,7 +34,7 @@ class RequestLog(models.Model):
     )
 
     def __str__(self):
-        return f"Request {self.id} from {self.sender} to {self.get_send_to_display()} at {self.sent_at}"
+        return f"Request {self.id} from {self.sender} to {self.get_sent_to_display()} at {self.sent_at}"
 
 
     @classmethod
@@ -51,9 +51,9 @@ class RequestLog(models.Model):
 
     @classmethod
     def request_count_by_endpoint(cls):
-        counts = cls.objects.values('send_to').annotate(request_count=Count('id'))
+        counts = cls.objects.values('sent_to').annotate(request_count=Count('id'))
         default_endpoints = {choice[0]: 0 for choice in cls.SEND_TO_CHOICES}
-        result = {item['send_to']: item['request_count'] for item in counts}
+        result = {item['sent_to']: item['request_count'] for item in counts}
         default_endpoints.update(result)
         return default_endpoints
 

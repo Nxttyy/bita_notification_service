@@ -21,10 +21,10 @@ class MonitorAPIViewTest(APITestCase):
         self.sender = sender_api_key
 
         # Create request logs
-        RequestLog.objects.create(sender=self.sender, response_status_code=200, send_to='email')
-        RequestLog.objects.create(sender=self.sender, response_status_code=500, send_to='sms')
-        RequestLog.objects.create(sender=self.sender, response_status_code=200, send_to='in-app')
-        RequestLog.objects.create(sender=self.sender, response_status_code=400, send_to='email')
+        RequestLog.objects.create(sender=self.sender, response_status_code=200, sent_to='email')
+        RequestLog.objects.create(sender=self.sender, response_status_code=500, sent_to='sms')
+        RequestLog.objects.create(sender=self.sender, response_status_code=200, sent_to = 'in-app')
+        RequestLog.objects.create(sender=self.sender, response_status_code=400, sent_to = 'email')
 
     def test_monitor_api_view_with_valid_api_key(self):
         """Test MonitorAPIView with a valid API key"""

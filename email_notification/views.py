@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from rest_framework_api_key.models import APIKey
 from django.shortcuts import render
 from monitor.models import RequestLog
-from .utils import data_from_request, build_error_log
+from monitor.utils import data_from_request, build_error_log
 from .spectacular_schemas import send_email_schema
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ def send_single_email(request):
         if not subject or not message or not recipients:
             RequestLog.objects.create(sender = client_name, 
                                 response_status_code=400,
-                                send_to = RequestLog.EMAIL)
+                                sent_to = RequestLog.EMAIL)
 
 
             return Response(
@@ -65,7 +65,7 @@ def send_single_email(request):
 
         RequestLog.objects.create(sender = client_name, 
                                 response_status_code=200,
-                                send_to = RequestLog.EMAIL)
+                                sent_to = RequestLog.EMAIL)
 
         logger.info(f"{client_name}({ip_address}) sent subject: {subject} to {recipients}")
         return Response({"status": "Email sent successfully"}, status=status.HTTP_200_OK)
@@ -74,7 +74,7 @@ def send_single_email(request):
         my_error = build_error_log(e)
         RequestLog.objects.create(sender = client_name, 
                                 response_status_code=500,
-                                send_to = RequestLog.EMAIL,
+                                sent_to = RequestLog.EMAIL,
                                 error_log = my_error)
         logger.error(e)
         return Response({"status": "Failed to send email", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

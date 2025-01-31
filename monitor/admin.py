@@ -4,9 +4,9 @@ from .models import RequestLog, ErrorLog
 # Register models with optional customization
 @admin.register(RequestLog)
 class RequestLogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'sender', 'sent_at', 'response_status_code', 'send_to', 'error_log')
-    list_filter = ('send_to', 'response_status_code', 'sent_at')
-    search_fields = ('sender__name', 'send_to')  # Assuming `APIKey` has a `name` field
+    list_display = ('id', 'sender', 'sent_at', 'response_status_code', 'sent_to', 'error_log')
+    list_filter = ('sent_to', 'response_status_code', 'sent_at')
+    search_fields = ('sender__name', 'sent_to')  # Assuming `APIKey` has a `name` field
 
 @admin.register(ErrorLog)
 class ErrorLogAdmin(admin.ModelAdmin):
