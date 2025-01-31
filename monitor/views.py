@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import RequestLog, APIKey
 from .serializers import APIKeySerializer
+from rest_framework_api_key.permissions import HasAPIKey
 
 @extend_schema(
     summary="Get Monitoring Metrics",
@@ -37,6 +38,7 @@ from .serializers import APIKeySerializer
     },
 )
 class MonitorAPIView(APIView):
+    # permission_classes = [HasAPIKey]
     def get(self, request, format=None):
         total_requests = RequestLog.total_request_count()
         success_count = RequestLog.success_count()
@@ -93,6 +95,7 @@ class MonitorAPIView(APIView):
 )
 class APIKeyListView(APIView):
     # permission_classes = [IsAdminUser]
+    # permission_classes = [HasAPIKey]
 
     def get(self, request, format=None):
         api_keys = APIKey.objects.all()
