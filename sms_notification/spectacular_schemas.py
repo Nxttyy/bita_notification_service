@@ -1,7 +1,7 @@
 # schemas.py
-from drf_spectacular.utils import OpenApiExample, OpenApiResponse
+from drf_spectacular.utils import OpenApiExample, OpenApiResponse, extend_schema
 
-# Single SMS API Schema
+# ✅ Single SMS API Schema
 SINGLE_SMS_REQUEST_SCHEMA = {
     "application/json": {
         "example": {
@@ -62,7 +62,7 @@ SINGLE_SMS_RESPONSES = {
     ),
 }
 
-# Bulk SMS API Schema
+# ✅ Bulk SMS API Schema
 BULK_SMS_REQUEST_SCHEMA = {
     "application/json": {
         "example": {
@@ -124,3 +124,20 @@ BULK_SMS_RESPONSES = {
         ],
     ),
 }
+
+# ✅ Define Extend Schema Decorators
+single_sms_schema = extend_schema(
+    request=SINGLE_SMS_REQUEST_SCHEMA,
+    responses=SINGLE_SMS_RESPONSES,
+    description="Send a single SMS using the GeezSMS API.",
+    summary="Send SMS",
+    tags=["SMS"],
+)
+
+bulk_sms_schema = extend_schema(
+    request=BULK_SMS_REQUEST_SCHEMA,
+    responses=BULK_SMS_RESPONSES,
+    description="Send bulk SMS.",
+    summary="Send Bulk SMS",
+    tags=["SMS"],
+)

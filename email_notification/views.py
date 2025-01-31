@@ -14,75 +14,12 @@ from rest_framework_api_key.models import APIKey
 from django.shortcuts import render
 from monitor.models import RequestLog
 from .utils import data_from_request, build_error_log
+from .spectacular_schemas import send_email_schema
 
 logger = logging.getLogger(__name__)
 
 @csrf_exempt
-@extend_schema(
-    # parameters=[
-    #     OpenApiParameter(
-    #         name='Authorization',  # The header name
-    #         description='API Key authentication, use format: "Api-Key <API_KEY>"',
-    #         required=True,
-    #         type=str,
-    #         location=OpenApiParameter.HEADER,
-    #     ),
-    # ],
-    summary="Send an Email to One/Multiple Recipients",
-    description="This endpoint sends an email with a dynamic subject, message, and recipients. The recipients can be provided as a comma-separated list.",
-    request={
-        'application/json': {
-            'type': 'object',
-            'properties': {
-                'subject': {
-                    'type': 'string',
-                    'description': 'The subject of the email.',
-                    'example': 'Password Reset Email'
-                },
-                'message': {
-                    'type': 'string',
-                    'description': 'The content/body of the email.',
-                    'example': 'Use the attached link to reset your password:\n <Link>'
-                },
-                'recipients': {
-                    'type': 'string',
-                    'description': 'A comma-separated list of email addresses.',
-                    'example': 'user1@example.com, user2@example.com'
-                },
-            },
-            'required': ['subject', 'message', 'recipients'],
-        }
-    },
-    responses={
-        200: OpenApiResponse(
-            description="Email sent successfully",
-            examples={
-                'application/json': {
-                    "status": "Email sent successfully"
-                }
-            }
-        ),
-        400: OpenApiResponse(
-            description="Missing required fields (subject, message, or recipients)",
-            examples={
-                'application/json': {
-                    "status": "Missing required fields",
-                    "error": "subject, message, and recipients are required"
-                }
-            }
-        ),
-        500: OpenApiResponse(
-            description="Failed to send email due to an internal server error",
-            examples={
-                'application/json': {
-                    "status": "Failed to send email",
-                    "error": "SMTP server not responding"
-                }
-            }
-        ),
-    },
- )
-
+@send_email_schema
 @api_view(('POST',))
 def send_single_email(request):
 

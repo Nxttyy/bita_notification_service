@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, throttle_classes
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, OpenApiResponse
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
-from .schemas import SINGLE_SMS_REQUEST_SCHEMA, SINGLE_SMS_RESPONSES, BULK_SMS_REQUEST_SCHEMA, BULK_SMS_RESPONSES
+from .spectacular_schemas import  single_sms_schema, bulk_sms_schema
 from django.conf import settings  # Import Django settings
 
 
@@ -16,13 +16,7 @@ class SMSRateThrottle(UserRateThrottle):
     scope = 'sms'
 
 
-@extend_schema(
-    request=SINGLE_SMS_REQUEST_SCHEMA,
-    responses=SINGLE_SMS_RESPONSES,
-    description="Send a single SMS using the GeezSMS API.",
-    summary="Send SMS",
-    tags=["SMS"],
-)
+@single_sms_schema
 @api_view(['POST'])
 @throttle_classes([SMSRateThrottle]) 
 def single_sms(request):
@@ -81,14 +75,7 @@ def single_sms(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-
-@extend_schema(
-    request=BULK_SMS_REQUEST_SCHEMA,
-    responses=BULK_SMS_RESPONSES,
-    description="Send bulk SMS.",
-    summary="Send Bulk SMS",
-    tags=["SMS"],
-)
+@bulk_sms_schema
 @api_view(['POST'])
 @throttle_classes([SMSRateThrottle]) 
 def bulk_sms(request):
