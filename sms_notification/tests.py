@@ -7,19 +7,18 @@ import os
 import requests
 
 @override_settings(
-    SMS_API_KEY='test_api_key',  # Ensure this matches the key used in the view
-    SMS_API_HEADER_FIELD='Authorization',  # Ensure this matches the header field used in the view
-    SMS_API_URL='https://api.geezsms.com/api/v1/sms/send',  # Ensure this matches the URL used in the view
-    SMS_SHORT_CODE='',  # Ensure this matches the shortcode used in the view)
+    SMS_API_KEY='test_api_key',  
+    SMS_API_HEADER_FIELD='Authorization',  
+    SMS_API_URL='https://api.geezsms.com/api/v1/sms/send',  
+    SMS_SHORT_CODE='',  
 )
 class SendSingleSMSTest(TestCase):
+
     def setUp(self):
-        # self.client = APIClient()
         # Create API key for authentication
         self.api_key, self.key = APIKey.objects.create_key(name="Test Email Key")
-        
 
-        self.url = reverse('single_sms')  # Replace with the actual URL name of the view
+        self.url = reverse('single_sms')  
         self.valid_payload = {
             "phone": "+1234567890",
             "message": "This is a test SMS message."
@@ -50,15 +49,7 @@ class SendSingleSMSTest(TestCase):
             headers={'Authorization': 'test_api_key'}
         )
 
-    #
-    # def test_send_sms_missing_fields(self):
-    #     # Include API key in headers
-    #     headers = {'HTTP_AUTHORIZATION': f'Api-Key {self.key}'}
-    #     response = self.client.post(self.url, data=self.invalid_payload, content_type='application/json', **headers)
-    #
-    #     self.assertEqual(response.status_code, 400)
-    #     self.assertEqual(response.json(), {"error": "Missing required fields (phone, message)"})
-    @patch('requests.post')  # Mock the external API call
+
     def test_send_sms_missing_fields(self, mock_post):
         # Include API key in headers
         headers = {'HTTP_AUTHORIZATION': f'Api-Key {self.key}'}
@@ -94,15 +85,15 @@ class SendSingleSMSTest(TestCase):
 
 
 @override_settings(
-    SMS_API_KEY='test_api_key',  # Ensure this matches the key used in the view
-    SMS_BULK_API_URL='https://api.geezsms.com/api/v1/sms/send/bulk',  # Ensure this matches the URL used in the view
+    SMS_API_KEY='test_api_key',  
+    SMS_BULK_API_URL='https://api.geezsms.com/api/v1/sms/send/bulk',  
 )
 class SendBulkSMSTest(TestCase):
     def setUp(self):
         # Create API key for authentication
         self.api_key, self.key = APIKey.objects.create_key(name="Test Bulk SMS Key")
         
-        self.url = reverse('bulk_sms')  # Replace with the actual URL name of the view
+        self.url = reverse('bulk_sms')  
         self.valid_payload = {
             "contacts": [
                 {"phone_number": "+1234567890", "name": "John Doe"},

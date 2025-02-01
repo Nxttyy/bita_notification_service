@@ -17,9 +17,9 @@ def data_from_request(request):
     return client_name, ip_address
 
 def build_error_log(e):
-    error_type = type(e).__name__  # Get the error type (e.g., ZeroDivisionError)
-    error_message = str(e)         # Get the error message
-    tb = traceback.format_exc()    # Get the full traceback as a string
+    error_type = type(e).__name__  # rror type (e.g., ZeroDivisionError)
+    error_message = str(e)         # error message
+    tb = traceback.format_exc()    # full traceback as a string
 
     error_log = ErrorLog.objects.create(
         error_type=error_type,

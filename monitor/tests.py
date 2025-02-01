@@ -2,7 +2,6 @@ from django.urls import reverse
 from django.test import TestCase
 from rest_framework.test import APIClient, APITestCase
 from rest_framework_api_key.models import APIKey
-# from rest_framework import 
 
 from rest_framework import status
 from monitor.models import RequestLog
@@ -32,12 +31,11 @@ class MonitorAPIViewTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Api-Key {self.key}')
         
         # Perform GET request
-        response = self.client.get(reverse('performance-metrics'))  # Replace with your actual URL name
+        response = self.client.get(reverse('performance-metrics'))  
         
         # Assert the response status code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # Parse the response data
         response_data = response.json()
         
         # Assertions on response data
@@ -55,7 +53,7 @@ class MonitorAPIViewTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Api-Key invalid-key')
         
         # Perform GET request
-        response = self.client.get(reverse('performance-metrics'))  # Replace with your actual URL name
+        response = self.client.get(reverse('performance-metrics'))  
         
         # Assert the response status code
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -63,7 +61,7 @@ class MonitorAPIViewTest(APITestCase):
     def test_monitor_api_view_without_api_key(self):
         """Test MonitorAPIView without providing an API key"""
         # Perform GET request without API key
-        response = self.client.get(reverse('performance-metrics'))  # Replace with your actual URL name
+        response = self.client.get(reverse('performance-metrics'))  
         
         # Assert the response status code
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -74,7 +72,7 @@ class MonitorAPIViewTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Api-Key {self.key}')
         
         # Perform GET request
-        response = self.client.get(reverse('performance-metrics'))  # Replace with your actual URL name
+        response = self.client.get(reverse('performance-metrics')) 
         response_data = response.json()
 
         # Assertions for endpoint-specific counts
@@ -85,7 +83,7 @@ class MonitorAPIViewTest(APITestCase):
 
         # Assertions for client-specific counts (if implemented in model)
         client_counts = response_data['request_count_by_client']
-        self.assertEqual(client_counts[str(self.sender.name)], 4)  # Replace if client count logic varies
+        self.assertEqual(client_counts[str(self.sender.name)], 4) 
 
     def test_monitor_api_view_no_requests(self):
         """Test MonitorAPIView with no request logs"""
@@ -96,7 +94,7 @@ class MonitorAPIViewTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Api-Key {self.key}')
         
         # Perform GET request
-        response = self.client.get(reverse('performance-metrics'))  # Replace with your actual URL name
+        response = self.client.get(reverse('performance-metrics'))  
         response_data = response.json()
 
         # Assertions for metrics
@@ -124,7 +122,7 @@ class APIKeyListViewTest(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Api-Key {self.key}')
         
         # Perform GET request
-        response = self.client.get(reverse('api-key-list'))  # Replace with the actual endpoint
+        response = self.client.get(reverse('api-key-list'))  
         
         # Assert the response status code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -143,7 +141,7 @@ class APIKeyListViewTest(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Api-Key invalid-key')
         
         # Perform GET request
-        response = self.client.get(reverse('api-key-list'))  # Replace with the actual endpoint
+        response = self.client.get(reverse('api-key-list'))  
         
         # Assert the response status code
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

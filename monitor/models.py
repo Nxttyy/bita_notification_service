@@ -15,7 +15,6 @@ class RequestLog(models.Model):
     ]
 
     id = models.AutoField(primary_key=True)  #
-    # sender = models.CharField(max_length=255)  
     sender = models.ForeignKey(APIKey, on_delete=models.CASCADE)
     sent_at = models.DateTimeField(auto_now_add=True)  
     response_status_code = models.IntegerField()  

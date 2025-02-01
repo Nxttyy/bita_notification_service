@@ -1,11 +1,8 @@
-import os
 import requests
-from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, throttle_classes
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, OpenApiResponse
-from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from rest_framework.throttling import UserRateThrottle
 
 from monitor.utils import build_error_log, data_from_request
 from .spectacular_schemas import  single_sms_schema, bulk_sms_schema
@@ -70,7 +67,7 @@ def single_sms(request):
 
     response_msg = {}
 
-    # Make the POST request to GeezSMS API
+    # Make the POST 
     try:
         response = requests.post(settings.SMS_API_URL, json=payload, headers=headers)
         response_msg = response.json()

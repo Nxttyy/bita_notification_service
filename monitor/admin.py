@@ -6,7 +6,7 @@ from .models import RequestLog, ErrorLog
 class RequestLogAdmin(admin.ModelAdmin):
     list_display = ('id', 'sender', 'sent_at', 'response_status_code', 'sent_to', 'error_log')
     list_filter = ('sent_to', 'response_status_code', 'sent_at')
-    search_fields = ('sender__name', 'sent_to')  # Assuming `APIKey` has a `name` field
+    search_fields = ('sender__name', 'sent_to')  
 
 @admin.register(ErrorLog)
 class ErrorLogAdmin(admin.ModelAdmin):
@@ -14,4 +14,3 @@ class ErrorLogAdmin(admin.ModelAdmin):
     list_filter = ('error_type', 'timestamp')
     search_fields = ('error_type', 'error_message')
 
-# Register your models here.

@@ -1,16 +1,16 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, authentication_classes
+from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
-from django.core.mail import send_mail
+# from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework import status
-from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiParameter
+# from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiParameter
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 import logging
 
-from django.http import HttpResponse
-from rest_framework_api_key.models import APIKey
+# from django.http import HttpResponse
+# from rest_framework_api_key.models import APIKey
 from django.shortcuts import render
 from monitor.models import RequestLog
 from monitor.utils import data_from_request, build_error_log

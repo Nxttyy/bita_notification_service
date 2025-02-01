@@ -42,11 +42,11 @@ sms_rate_limit = os.getenv('SMS_RATELIMIT_PER_MINUTE', 10)
 
 # SMTP settings
 EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'mail.gumiapps.com')  # Set your SMTP host
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 465))  # Set the appropriate SMTP port
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'mail.gumiapps.com')  # SMTP host
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 465))  # SSMTP port
 EMAIL_USE_TLS = True  
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'dev-v01@gumiapps.com') 
-SMS_API_KEY = os.getenv('SMS_API_KEY')  # Load from .env
+SMS_API_KEY = os.getenv('SMS_API_KEY')  
 SMS_API_HEADER_FIELD = 'X-GeezSMS-Key'
 SMS_API_URL = 'https://api.geezsms.com/api/v1/sms/send'
 SMS_BULK_API_URL = 'https://api.geezsms.com/api/v1/sms/send/bulk'
