@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # Load DEBUG from .env
 DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)    
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
 
 
 # constants and .env variables
@@ -42,10 +42,10 @@ sms_rate_limit = os.getenv('SMS_RATELIMIT_PER_MINUTE', 10)
 
 # SMTP settings
 EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'mail.gumiapps.com')  # SMTP host
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 465))  # SSMTP port
+EMAIL_HOST = os.getenv('EMAIL_HOST')  # SMTP host
+EMAIL_PORT = int(os.getenv('EMAIL_PORT'))  # SSMTP port
 EMAIL_USE_TLS = True  
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'dev-v01@gumiapps.com') 
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER') 
 SMS_API_KEY = os.getenv('SMS_API_KEY')  
 SMS_API_HEADER_FIELD = 'X-GeezSMS-Key'
 SMS_API_URL = 'https://api.geezsms.com/api/v1/sms/send'
@@ -190,14 +190,14 @@ LOGGING = {
             "class": "logging.FileHandler",
             "filename": "general.log",
             "formatter": "verbose",
-            "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO"),  # Set log level to INFO or desired level
+            "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO"),  
         },
     },
     "loggers": {
         "": {
             "handlers": ["console", "file"],
             "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO"),
-            "propagate": True,  # Ensure logs propagate to all handlers
+            "propagate": True, 
         }
     },
     "formatters": {

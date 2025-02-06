@@ -13,7 +13,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 # Custom SMS throttle
 class SMSRateThrottle(UserRateThrottle):
     scope = 'sms'
@@ -26,7 +25,7 @@ def single_sms(request):
 
     client_name, ip_address = data_from_request(request)
 
-    # Pull the API key from settings
+    # Pull the 3rd party sms providor's API key from settings
     api_key = settings.SMS_API_KEY
     if not api_key:
         RequestLog.objects.create(sender=client_name,

@@ -2,10 +2,8 @@ from django.urls import reverse
 from django.test import TestCase
 from rest_framework.test import APIClient, APITestCase
 from rest_framework_api_key.models import APIKey
-
 from rest_framework import status
 from monitor.models import RequestLog
-
 
 class MonitorAPIViewTest(APITestCase):
     def setUp(self):

@@ -1,16 +1,11 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
-# from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework import status
-# from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiParameter
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 import logging
-
-# from django.http import HttpResponse
-# from rest_framework_api_key.models import APIKey
 from django.shortcuts import render
 from monitor.models import RequestLog
 from monitor.utils import data_from_request, build_error_log
@@ -78,7 +73,6 @@ def send_single_email(request):
                                 error_log = my_error)
         logger.error(e)
         return Response({"status": "Failed to send email", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 
 def home(request):

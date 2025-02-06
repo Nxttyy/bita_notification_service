@@ -9,7 +9,7 @@ class SendSingleEmailTest(TestCase):
         # Create API key for authentication
         self.api_key, self.key = APIKey.objects.create_key(name="Test Email Key")
         
-        self.url = reverse('send_single_email')  # Replace with the actual URL name of the view
+        self.url = reverse('send_single_email')  
         self.valid_payload = {
             "subject": "Test Email",
             "message": "This is a test email message.",
@@ -20,7 +20,8 @@ class SendSingleEmailTest(TestCase):
             "recipients": "test1@example.com, test2@example.com"
         }
 
-    @patch('django.core.mail.EmailMessage.send')  # Mock the send method
+    # Mock the send method  
+    @patch('django.core.mail.EmailMessage.send')  
     def test_send_email_success(self, mock_send):
         # Simulate successful email sending
         mock_send.return_value = 1
@@ -43,8 +44,9 @@ class SendSingleEmailTest(TestCase):
             "status": "Missing required fields",
             "error": "subject, message, and recipients are required"
         })
-
-    @patch('django.core.mail.EmailMessage.send')  # Mock the send method
+        
+    # Mock the send method
+    @patch('django.core.mail.EmailMessage.send')  
     def test_send_email_failure(self, mock_send):
         # Simulate an exception being raised during email sending
         mock_send.side_effect = Exception("SMTP server not responding")

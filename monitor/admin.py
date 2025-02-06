@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import RequestLog, ErrorLog
 
-# Register models with optional customization
 @admin.register(RequestLog)
 class RequestLogAdmin(admin.ModelAdmin):
     list_display = ('id', 'sender', 'sent_at', 'response_status_code', 'sent_to', 'error_log')

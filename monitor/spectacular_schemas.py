@@ -1,8 +1,6 @@
 
 from drf_spectacular.utils import OpenApiExample, OpenApiResponse, extend_schema
 
-
-
 metrics_monitor_schema = extend_schema(
     summary="Get Monitoring Metrics",
     description="Returns metrics including total requests, success/failure rates, request counts by endpoint, and client.",
